@@ -3,6 +3,7 @@ package org.spout.vanilla.generator;
 import java.util.ArrayList;
 
 import net.royawesome.jlibnoise.module.combiner.Select;
+import net.royawesome.jlibnoise.module.source.Perlin;
 import net.royawesome.jlibnoise.module.source.Voronoi;
 
 import org.spout.api.geo.World;
@@ -13,18 +14,20 @@ public class BiomeSource {
 	private ArrayList<AbstractBiome> biomes = new ArrayList<AbstractBiome>();
 	
 	public static final int SEED_SHIFT = 3982462;
-	protected Voronoi biomeType = new Voronoi();
+	protected Perlin biomeType = new Perlin();
 	protected Select finalTerrain;
 	
 	public BiomeSource() {
-		biomeType.setFrequency(0.5);
+		biomeType.setOctaveCount(10);
+		biomeType.setPersistence(0.25);
 		setupSelect();
 	}
 	
 	private void setupSelect() {
 		finalTerrain = new Select();
 		finalTerrain.setControlModule(biomeType);
-		finalTerrain.setEdgeFalloff(0.25);
+		finalTerrain.setEdgeFalloff(0.125);
+		finalTerrain.setBounds(1000, 0);
 	}
 	
 	public void clearBiomes() {
@@ -39,14 +42,17 @@ public class BiomeSource {
 
 	public AbstractBiome getBiomeAt(World world, int x, int z) {
 		biomeType.setSeed((int) (world.getSeed() + SEED_SHIFT));
-		double value = (biomeType.GetValue(x / 64.0, 0.01, z / 64.0) + 1.0) * biomes.size() / 2.0;
+		double value = (biomeType.GetValue(x / 64.0, 0.01, z / 64.0) + 1.0) * (biomes.size() - 1) / 2.0;
 		return biomes.get((int) value);
 	}
 	
 	public int getHeightAt(World world, int x, int z) {
+		biomeType.setSeed((int) (world.getSeed() + SEED_SHIFT));
 		for(AbstractBiome biome : biomes) {
 			biome.setWorld(world);
 		}
-		return (int) (finalTerrain.GetValue(x / 16.0, 0.01, z / 16.0));
+		double v = (finalTerrain.GetValue(x + 0.05, 0.01, z + 0.05) + 1.0) * 64.0;
+		System.out.println(v);
+		return (int) v;
 	}
 }
