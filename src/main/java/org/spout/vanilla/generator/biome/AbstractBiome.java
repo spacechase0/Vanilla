@@ -19,7 +19,7 @@ public abstract class AbstractBiome extends Module {
 
 	@Override
 	public double GetValue(double x, double y, double z) {
-		return (double) getHeightAt(world, (int) x, (int) z) / 64.0 - 1.0;
+		return ((double) getHeightAt(world, (int) x, (int) z) + 0.05) / 64.0 - 1.0;
 	}
 
 	@Override

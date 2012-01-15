@@ -27,7 +27,7 @@ public class BiomeSource {
 		finalTerrain = new Select();
 		finalTerrain.setControlModule(biomeType);
 		finalTerrain.setEdgeFalloff(0.125);
-		finalTerrain.setBounds(1000, 0);
+		//finalTerrain.setBounds(1000, 0);
 	}
 	
 	public void clearBiomes() {
@@ -52,7 +52,7 @@ public class BiomeSource {
 			biome.setWorld(world);
 		}
 		double v = (finalTerrain.GetValue(x + 0.05, 0.01, z + 0.05) + 1.0) * 64.0;
-		System.out.println(v);
+		//System.out.println(v);
 		return (int) v;
 	}
 }
