@@ -25,44 +25,25 @@
  */
 package org.spout.vanilla.generator.normal;
 
-import java.util.ArrayList;
-import java.util.Random;
-
-import net.royawesome.jlibnoise.module.source.Perlin;
-
 import org.spout.api.generator.Populator;
 import org.spout.api.generator.WorldGenerator;
+import org.spout.api.geo.cuboid.Chunk;
 import org.spout.api.util.cuboid.CuboidShortBuffer;
 import org.spout.vanilla.VanillaBlocks;
+import org.spout.vanilla.generator.BiomeSource;
+import org.spout.vanilla.generator.biome.AbstractBiome;
+import org.spout.vanilla.generator.normal.biomes.OceanBiome;
+import org.spout.vanilla.generator.normal.biomes.PlainsBiome;
+import org.spout.vanilla.generator.normal.biomes.PlateauBiome;
 
 public class NormalGenerator implements WorldGenerator {
-	int seed = 42;
-	Perlin layerCount = new Perlin(), heightMap = new Perlin();
-	ArrayList<Perlin> layers = new ArrayList<Perlin>();
-
-
+	
+	private BiomeSource biomes = new BiomeSource();
+	
 	public NormalGenerator() {
-		layerCount.setSeed(seed + 10);
-		layerCount.setOctaveCount(5);
-		
-		heightMap.setSeed(seed);
-		heightMap.setOctaveCount(5);
-	}
-
-	public Perlin getLayer(int layer) {
-		if(layer >= 0) {
-			if(layer < layers.size()) {
-				return layers.get(layer);
-			} else {
-				Perlin p = new Perlin();
-				p.setSeed(seed + layer);
-				p.setOctaveCount(5);
-				layers.add(p);
-				return p;
-			}
-		} else {
-			return null;
-		}
+		biomes.addBiome(new PlainsBiome());
+		biomes.addBiome(new PlateauBiome());
+		biomes.addBiome(new OceanBiome());
 	}
 
 	private final Populator[] populators = new Populator[]{new TreePopulator(), new PondPopulator(), new StrongholdPopulator(), new VillagePopulator(), new AbandonedMineshaftPopulator(), new DungeonPopulator()};
@@ -88,70 +69,22 @@ public class NormalGenerator implements WorldGenerator {
 		for (int dx = x; dx < (x+16); dx++) {
 			for (int dz = z; dz < (z+16); dz++) {
 				
-				int height = (int) ((heightMap.GetValue(dx / 16.0 + 0.005, 0.05, dz / 16.0 + 0.005) + 1.0) * 4.0 + 60.0);
+				int height = biomes.getHeightAt(blockData.getWorld(), dx, dz);
 				
-				boolean wateredStack = height < 64;
+				CuboidShortBuffer stack = new CuboidShortBuffer(blockData.getWorld(), dx, y, dz, 1, Chunk.CHUNK_SIZE, 1);
+				for(int dy = y; dy < y + 16; dy++) {
+					if(dy <= height) {
+						stack.set(dx, dy, dz, VanillaBlocks.stone.getId());
+					}
+				}	
+				
+				AbstractBiome biome = biomes.getBiomeAt(blockData.getWorld(), dx, dz);
+				biome.decorateStack(stack, dx, y, dz);
 				
 				for(int dy = y; dy < y + 16; dy++) {
-					short id = VanillaBlocks.air.getId();
-					
-					id = getBlockId(height, dy);
-					
-					blockData.set(dx, dy, dz, id);
+					blockData.set(dx, dy, dz, stack.get(dx, dy, dz));
 				}
-				int layers = (int) ((layerCount.GetValue(dx / 16.0 + 0.05, 0.05, dz / 16.0 + 0.05) + 1.0) * 5.0 + 2);
-
-				if(layers <= 0) {
-					layers = 2;
-				}
-
-				int heightPerLayer = 59/layers;
-
-				for (int layer = 0; layer < layers; layer+=2) {
-					Perlin bottom = getLayer(layer);
-					Perlin top = getLayer(layer+1);
-					int min = 3 + heightPerLayer * layer;
-					int max = 3 + heightPerLayer * (layer + 1);
-					int b = (int) ((getPerlinValueXZ(bottom, dx, dz) + 1.0) * heightPerLayer / 3.0 + min);
-					int t = (int) ((getPerlinValueXZ(top, dx, dz) + 1.0) * heightPerLayer / 3.0 + max);
-					for(int dy = y; dy < y + 16; dy++) {
-						if(dy > b && dy < t) {
-							blockData.set(dx, dy, dz, VanillaBlocks.air.getId());
-						}
-					}
-				}
-
-				if(wateredStack) {
-					for(int dy = y + 15; dy >= y; dy--) {
-						if(dy < 64 && blockData.get(dx, dy, dz) == VanillaBlocks.air.getId()) {
-							blockData.set(dx, dy, dz, VanillaBlocks.water.getId());
-						} else {
-							break;
-						}
-					}
-				}
-				
 			}
 		}
-	}
-
-	public static double getPerlinValueXZ(Perlin perlin, int x, int z) {
-		return perlin.GetValue(x / 16.0 + 0.05, 0.05, z / 16.0 + 0.05);
-	}
-
-	private short getBlockId(int top, int dy) {
-		short id;
-		if(dy > top) {
-			id = VanillaBlocks.air.getId();
-		} else if(dy == (int)top && dy >= 63) {
-			id = VanillaBlocks.grass.getId();
-		} else if(dy + 4 >=(int)top) {
-			id = VanillaBlocks.dirt.getId();
-		} else if(dy != 0){
-			id = VanillaBlocks.stone.getId();
-		} else {
-			id = VanillaBlocks.bedrock.getId();
-		}
-		return id;
 	}
 }
