@@ -52,9 +52,7 @@ public final class PositionRotationMessageHandler extends MessageHandler<Positio
 		double y = message.getY();
 		double z = message.getZ();
 
-		entity.setX((float) x);
-		entity.setY((float) y);
-		entity.setZ((float) z);
+		entity.setPosition((float) x, (float) y, (float) z);
 		entity.setYaw(rot);
 		entity.setPitch(pitch);
 	}

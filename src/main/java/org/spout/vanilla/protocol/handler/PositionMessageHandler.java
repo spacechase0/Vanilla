@@ -50,9 +50,7 @@ public final class PositionMessageHandler extends MessageHandler<PositionMessage
 		double y = message.getY();
 		double z = message.getZ();
 
-		entity.setX((float) x);
-		entity.setY((float) y);
-		entity.setZ((float) z);
+		entity.setPosition((float) x, (float) y, (float) z);
 	}
 
 	public void handleClient(Session session, Player player, PositionRotationMessage message) {
