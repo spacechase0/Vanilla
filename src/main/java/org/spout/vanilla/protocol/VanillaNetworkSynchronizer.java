@@ -116,14 +116,14 @@ public class VanillaNetworkSynchronizer extends NetworkSynchronizer {
 
 		//System.out.println("Sending chunk (" + x + ", " + y + ", " + z + ") " + c);
 
-		if (y < 0 || y > 7) {
+		if (y < 0 || y * 16 > c.getWorld().getHeight()) {
 			return;
 		}
 
 		ChunkSnapshot snapshot = c.getSnapshot(false);
 		short[] rawBlockIdArray = snapshot.getBlockIds();
 		short[] rawBlockData = snapshot.getBlockData();
-		byte[] fullChunkData = new byte[5 * 16 * 16 * 16 / 2];
+		byte[] fullChunkData = new byte[16 * 16 * 16 * 5 / 2];
 		final int maxIdIndex = 16 * 16 * 16;
 		final int maxDataIndex = maxIdIndex + 16 * 16 * 16 / 2;
 		for (int i = 0; i < fullChunkData.length; i++) {
@@ -139,10 +139,14 @@ public class VanillaNetworkSynchronizer extends NetworkSynchronizer {
 			// TODO - conversion code
 			fullChunkData[i] = (byte) (rawBlockIdArray[i] & 0xFF);
 		}
+
 		for (int i = 0; i < rawBlockData.length; i += 2) {
 			fullChunkData[i + maxIdIndex] = (byte) (rawBlockData[i + 1] & 0xF << 4 | rawBlockData[i] & 0xF);
 		}
-		CompressedChunkMessage CCMsg = new CompressedChunkMessage(x * Chunk.CHUNK_SIZE, y * Chunk.CHUNK_SIZE, z * Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE, Chunk.CHUNK_SIZE, fullChunkData);
+
+		byte[][] packetChunkData = new byte[16][];
+		packetChunkData[y] = fullChunkData;
+		CompressedChunkMessage CCMsg = new CompressedChunkMessage(x, z, false, new boolean[16], 0, packetChunkData);
 		owner.getSession().send(CCMsg);
 	}
 
@@ -160,7 +164,7 @@ public class VanillaNetworkSynchronizer extends NetworkSynchronizer {
 		if (first) {
 			first = false;
 			int entityId = owner.getEntity().getId();
-			IdentificationMessage idMsg = new IdentificationMessage(entityId, owner.getName(), world.getSeed(), 1, 0, 0, 128, 20, "DEFAULT");
+			IdentificationMessage idMsg = new IdentificationMessage(entityId, owner.getName(), world.getSeed(), 1, 0, 0, world.getHeight(), session.getGame().getMaxPlayers(), "DEFAULT");
 			owner.getSession().send(idMsg);
 			for (int slot = 0; slot < 5; slot++) {
 				EntityEquipmentMessage EEMsg = new EntityEquipmentMessage(entityId, slot, -1, 0);
