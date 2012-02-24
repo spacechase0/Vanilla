@@ -214,10 +214,8 @@ public class VanillaNetworkSynchronizer extends NetworkSynchronizer {
 		Controller c = e.getController();
 		if (c != null) {
 			EntityProtocol ep = c.getEntityProtocol(VanillaPlugin.vanillaProtocolId);
-			System.out.println("Entity protocol for " + c + " is " + ep);
 			if (ep != null) {
 				Message spawn = ep.getSpawnMessage(e);
-				System.out.println("Spawm message for " + c + " is " + spawn);
 				if (spawn != null) {
 					activeEntities.add(e.getId());
 					session.send(spawn);

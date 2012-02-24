@@ -84,7 +84,7 @@ public class RegionEntitySpawner extends Controller {
 			for (int dy = 0; dy < Region.REGION_SIZE; dy++) {
 				for (int dz = 0; dz < Region.REGION_SIZE; dz++) {
 					Chunk chunk = region.getChunk(dx, dy, dz, false);
-					if (chunk != null && !chunk.isUnloaded()) {
+					if (chunk != null && !chunk.isUnloaded() && chunk.isPopulated()) {
 						spawn(chunk);
 					}
 				}
@@ -123,7 +123,10 @@ public class RegionEntitySpawner extends Controller {
 							if (construct != null) {
 								try {
 									Controller controller = (Controller)construct.newInstance();
-									region.getWorld().createAndSpawnEntity(new Point(region.getWorld(), x + 0.5F, y, z + 0.5F), controller);
+									x += chunk.getX() * 16 + 0.5F;
+									y += chunk.getY() * 16 + 1F;
+									z += chunk.getZ() * 16 + 0.5F;
+									region.getWorld().createAndSpawnEntity(new Point(region.getWorld(), x, y, z), controller);
 								} catch (Exception e) {
 									throw new RuntimeException("Unable to spawn " + entry.getKey(), e);
 								}
