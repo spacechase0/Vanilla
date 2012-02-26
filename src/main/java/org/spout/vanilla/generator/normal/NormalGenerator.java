@@ -25,10 +25,10 @@
  */
 package org.spout.vanilla.generator.normal;
 
+import org.spout.vanilla.biome.BiomeGenerator;
 import org.spout.vanilla.biome.selectors.NoiseSelector;
-import org.spout.vanilla.biome.selectors.SquareSelector;
-import org.spout.vanilla.generator.BiomeGenerator;
 import org.spout.vanilla.generator.normal.biome.DesertBiome;
+import org.spout.vanilla.generator.normal.biome.TundraBiome;
 import org.spout.vanilla.generator.normal.biome.PlainBiome;
 
 /**
@@ -40,6 +40,7 @@ public class NormalGenerator extends BiomeGenerator {
 		setSelector(new NoiseSelector());
 		register(new PlainBiome());
 		register(new DesertBiome());
+		register(new TundraBiome());
 		//TODO: Create Normal's biome(s);
 	}
 }

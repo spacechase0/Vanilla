@@ -1,9 +1,9 @@
 /*
- * This file is part of Vanilla (http://www.spout.org/).
+ * This file is part of vanilla (http://www.spout.org/).
  *
- * Vanilla is licensed under the SpoutDev License Version 1.
+ * vanilla is licensed under the SpoutDev License Version 1.
  *
- * Vanilla is free software: you can redistribute it and/or modify
+ * vanilla is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -23,22 +23,23 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spout.vanilla.generator.normal.biome;
+package org.spout.vanilla.biome.selectors;
 
-import org.spout.api.util.cuboid.CuboidShortBuffer;
-import org.spout.vanilla.biome.BiomeType;
-import org.spout.vanilla.generator.VanillaBiomeType;
+import org.spout.vanilla.biome.BiomeSelector;
 
 /**
- * Biome consisting of mountain-like structures.
+ *
+ * @author zml2008
  */
-public class MountainBiome extends VanillaBiomeType {
-
-	public MountainBiome() {
-		super(3);
+public class SingleSelector extends BiomeSelector {
+	private final int index;
+	
+	public SingleSelector(int index) {
+		this.index = index;
 	}
+
 	@Override
-	public void generateColumn(CuboidShortBuffer blockData, int x, int chunkY, int z) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public int pickBiome(int x, int y, int z, long seed) {
+		return index;
 	}
 }

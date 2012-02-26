@@ -25,9 +25,8 @@
  */
 package org.spout.vanilla.generator.nether;
 
-import org.spout.vanilla.biome.selectors.NoiseSelector;
-import org.spout.vanilla.biome.selectors.SquareSelector;
-import org.spout.vanilla.generator.BiomeGenerator;
+import org.spout.vanilla.biome.BiomeGenerator;
+import org.spout.vanilla.biome.selectors.SingleSelector;
 import org.spout.vanilla.generator.nether.biome.NetherrackBiome;
 
 /**
@@ -36,7 +35,7 @@ import org.spout.vanilla.generator.nether.biome.NetherrackBiome;
 public class NetherGenerator extends BiomeGenerator {
 	@Override
 	public void registerBiomes() {
-		setSelector(new NoiseSelector());
+		setSelector(new SingleSelector(0));
 		register(new NetherrackBiome());
 		//TODO: Create Nether's biome(s);
 	}

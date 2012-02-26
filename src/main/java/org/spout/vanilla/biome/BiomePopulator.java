@@ -23,22 +23,23 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spout.vanilla.generator.normal.biome;
+package org.spout.vanilla.biome;
 
-import org.spout.api.util.cuboid.CuboidShortBuffer;
-import org.spout.vanilla.biome.BiomeType;
-import org.spout.vanilla.generator.VanillaBiomeType;
+import java.util.Random;
 
-/**
- * Biome consisting of mountain-like structures.
- */
-public class MountainBiome extends VanillaBiomeType {
+import org.spout.api.generator.Populator;
+import org.spout.api.geo.cuboid.Chunk;
+import org.spout.vanilla.biome.BiomeMap;
 
-	public MountainBiome() {
-		super(3);
+public final class BiomePopulator implements Populator {
+	final BiomeMap map;
+
+	public BiomePopulator(BiomeMap map) {
+		this.map = map;
 	}
+
 	@Override
-	public void generateColumn(CuboidShortBuffer blockData, int x, int chunkY, int z) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public final void populate(Chunk chunk, Random random) {
+		map.getBiome(chunk.getX(), chunk.getZ(), chunk.getWorld().getSeed()).decorate(chunk, random);
 	}
 }

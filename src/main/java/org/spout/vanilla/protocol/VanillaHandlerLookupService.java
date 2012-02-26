@@ -36,8 +36,6 @@ import org.spout.vanilla.protocol.handler.CloseWindowMessageHandler;
 import org.spout.vanilla.protocol.handler.DiggingMessageHandler;
 import org.spout.vanilla.protocol.handler.EntityActionMessageHandler;
 import org.spout.vanilla.protocol.handler.GroundMessageHandler;
-import org.spout.vanilla.protocol.handler.HandshakeMessageHandler;
-import org.spout.vanilla.protocol.handler.IdentificationMessageHandler;
 import org.spout.vanilla.protocol.handler.KickMessageHandler;
 import org.spout.vanilla.protocol.handler.PingMessageHandler;
 import org.spout.vanilla.protocol.handler.PositionMessageHandler;
@@ -54,8 +52,6 @@ import org.spout.vanilla.protocol.msg.CloseWindowMessage;
 import org.spout.vanilla.protocol.msg.DiggingMessage;
 import org.spout.vanilla.protocol.msg.EntityActionMessage;
 import org.spout.vanilla.protocol.msg.GroundMessage;
-import org.spout.vanilla.protocol.msg.HandshakeMessage;
-import org.spout.vanilla.protocol.msg.IdentificationMessage;
 import org.spout.vanilla.protocol.msg.KickMessage;
 import org.spout.vanilla.protocol.msg.PingMessage;
 import org.spout.vanilla.protocol.msg.PositionMessage;
@@ -72,8 +68,6 @@ public class VanillaHandlerLookupService extends HandlerLookupService {
 
 	static {
 		try {
-			bind(IdentificationMessage.class, IdentificationMessageHandler.class);
-			bind(HandshakeMessage.class, HandshakeMessageHandler.class);
 			bind(ChatMessage.class, ChatMessageHandler.class);
 			bind(GroundMessage.class, GroundMessageHandler.class);
 			bind(PositionMessage.class, PositionMessageHandler.class);

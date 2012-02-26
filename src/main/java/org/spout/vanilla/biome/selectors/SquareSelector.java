@@ -29,7 +29,7 @@ import org.spout.vanilla.biome.BiomeSelector;
 
 public class SquareSelector extends BiomeSelector {
 	@Override
-	public int pickBiome(int x, int y, int z, int maxBiomes, long seed) {
-		return Math.abs((x / 64 ^ z / 64) % maxBiomes);
+	public int pickBiome(int x, int y, int z, long seed) {
+		return x / 64 ^ z / 64;
 	}
 }
