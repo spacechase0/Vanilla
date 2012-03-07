@@ -53,6 +53,7 @@ public abstract class VanillaEntity extends Controller {
 	protected final Vector3m velocity = new Vector3m(Vector3.ZERO);
 	private int fireTicks;
 	private boolean flammable;
+	protected boolean deathTrigger = false;
 	
 	@Override
 	public void onAttached() {
@@ -62,6 +63,10 @@ public abstract class VanillaEntity extends Controller {
 	@Override
 	public void onTick(float dt) {
 		if (parent.isDead()) {
+			if (!deathTrigger) {
+				deathTrigger = true;
+				onEntityDeath();
+			}
 			return;
 		}
 		
@@ -92,6 +97,10 @@ public abstract class VanillaEntity extends Controller {
 		}
 		
 		if (parent.isDead()) {
+			if (!deathTrigger) {
+				deathTrigger = true;
+				onEntityDeath();
+			}
 			return;
 		}
 		
@@ -242,5 +251,9 @@ public abstract class VanillaEntity extends Controller {
 
 	public Vector3 getVelocity() {
 		return velocity;
+	}
+	
+	public void onEntityDeath() {
+		System.out.println("ouch");
 	}
 }
