@@ -63,7 +63,7 @@ public abstract class LivingEntity extends VanillaEntity {
 	}
 
 	@Override
-	public void onDeath() {
+	public void onEntityDeath() {
 		Set<ItemStack> drops = getDeathDrops();
 		for (ItemStack drop : drops) {
 			Item item = new Item(drop, prevPoint.normalize());

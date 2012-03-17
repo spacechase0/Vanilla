@@ -37,6 +37,7 @@ import org.spout.api.math.Vector3;
 import org.spout.api.player.Player;
 import org.spout.api.protocol.Message;
 import org.spout.vanilla.VanillaMaterials;
+import org.spout.vanilla.protocol.msg.DestroyEntityMessage;
 import org.spout.vanilla.protocol.msg.EntityAnimationMessage;
 import org.spout.vanilla.protocol.msg.EntityHeadYawMessage;
 import org.spout.vanilla.protocol.msg.EntityStatusMessage;
@@ -51,6 +52,8 @@ public abstract class VanillaEntity extends Controller {
 	protected Vector3 velocity = Vector3.ZERO;
 	private int fireTicks;
 	private boolean flammable;
+	private boolean deathTrigger = false;
+	private int corpseTimer = 0;
 
 	@Override
 	public void onAttached() {
@@ -72,6 +75,12 @@ public abstract class VanillaEntity extends Controller {
 
 		if (health <= 0) {
 			toSend.add(new EntityStatusMessage(getParent().getId(), EntityStatusMessage.ENTITY_DEAD));
+			if (!deathTrigger) {
+				onEntityDeath();
+				deathTrigger = true;
+			} else if (corpseTimer++ > 30) {
+				toSend.add(new DestroyEntityMessage(getParent().getId()));
+			}
 		}
 
 		if (toSend.isEmpty()) {
@@ -84,8 +93,8 @@ public abstract class VanillaEntity extends Controller {
 				player.getSession().send(message);
 			}
 		}
-
-		if (health <= 0) {
+		
+		if (health <= 0 && corpseTimer++ > 30) {
 			getParent().kill();
 		}
 
@@ -200,5 +209,8 @@ public abstract class VanillaEntity extends Controller {
 
 	public void setVelocity(Vector3 velocity) {
 		this.velocity = velocity;
+	}
+	
+	protected void onEntityDeath() {
 	}
 }
